@@ -1,10 +1,8 @@
 import base64
-import collections
 from datetime import datetime
-import uuid, uvicorn
+import uuid
 from fastapi import FastAPI, File, UploadFile
 from connection import collection
-from pydantic import BaseModel
 
 # class Post(BaseModel):
 #     id: str
@@ -27,14 +25,13 @@ async def image_post(author: str, title: str ,file: UploadFile = File(...)):
 
     str = base64.b64decode(contents)
 
-    data = {"_id":author, "title": title ,"data": str, "uploaded": datetime.now()}
-    
-    collection.insert_one(data)
+    data = {"author":author, "title": title ,"data": str, "uploaded": datetime.now()}
 
-    return("added successfully")
+    try:
+        collection.insert_one(data)
+    except:
+        print('Error')
 
+    return("Added successfully")
 
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", reload = True)
 
